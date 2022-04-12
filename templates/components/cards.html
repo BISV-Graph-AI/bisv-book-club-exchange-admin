@@ -1,0 +1,9 @@
+<div class="card shadow p-3 mb-2 bg-body rounded" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-name">{{obj.name}}</h5>
+    <p class="card-text">Email : {{obj.email}}</p>
+    <p class="card-text">PayPal : <a href="{{obj.paypal}}">{{obj.paypal}}</a></p>
+    <p class="card-text">Zelle : {{obj.zelle}}</p>
+    <a href="/details/{{obj.id}}" class="btn btn-primary">Read more</a>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+{% extends "shared/base.html" %}
+
+
+{% block title %}
+  <title>Seller Detail</title>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+  <div class="row">
+    <div class="col">
+      <h1 class="display-5">Seller Detail</h1>
+    </div>
+  </div>
+
+  <div class="row">
+      <table class="table table-striped table-hover">
+        <tbody>
+          <tr>
+            <th scope="row">Seller Name</th>
+            <td colspan="2">{{seller.name}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Email</th>
+            <td colspan="2">{{seller.email}}</td>
+          </tr>
+          <tr>
+            <th scope="row">PayPal</th>
+            <td colspan="2">{{seller.paypal}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Zelle</th>
+            <td colspan="2">{{seller.zelle}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Data Addeded</th>
+            <td colspan="2">{{seller.date_added}}</td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
