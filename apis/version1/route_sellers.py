@@ -35,7 +35,7 @@ def create_seller(
 
 
 @router.get(
-    "/get/{id}", response_model=ShowSeller
+    "/get_seller/{id}", response_model=ShowSeller
 )  # if we keep just "{id}" . it would stat catching all routes
 def read_seller(id: int, db: Session = Depends(get_db)):
     seller = retreive_seller(id=id, db=db)
@@ -47,13 +47,13 @@ def read_seller(id: int, db: Session = Depends(get_db)):
     return seller 
 
 
-@router.get("/all", response_model=List[ShowSeller])
+@router.get("/all_sellers", response_model=List[ShowSeller])
 def read_sellers(db: Session = Depends(get_db)):
     sellers = list_sellers(db=db)
     return sellers
 
 
-@router.put("/update/{id}")
+@router.put("/update_seller/{id}")
 def update_seller(id: int, seller: SellerCreate, db: Session = Depends(get_db)):
     current_user = 1
     message = update_seller_by_id(id=id, seller=seller, db=db, owner_id=current_user)
@@ -64,7 +64,7 @@ def update_seller(id: int, seller: SellerCreate, db: Session = Depends(get_db)):
     return {"msg": "Successfully updated data."}
 
 
-@router.delete("/delete/{id}")
+@router.delete("/delete_seller/{id}")
 def delete_seller(
     id: int,
     db: Session = Depends(get_db),
@@ -85,7 +85,7 @@ def delete_seller(
     )
 
 
-@router.get("/autocomplete")
+@router.get("/autocomplete_seller")
 def autocomplete(term: Optional[str] = None, db: Session = Depends(get_db)):
     sellers = search_seller(term, db=db)
     seller_names = []

@@ -1,0 +1,55 @@
+{% extends "shared/base.html" %}
+
+
+{% block title %}
+  <title>Book Detail</title>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+  <div class="row">
+    <div class="col">
+      <h1 class="display-5">Book Detail</h1>
+    </div>
+  </div>
+
+  <div class="row">
+      <table class="table table-striped table-hover">
+        <tbody>
+          <tr>
+            <th scope="row">Book Title</th>
+            <td colspan="2">{{book.title}}</td>
+          </tr>
+          <tr>
+            <th scope="row">ISBN13</th>
+            <td colspan="2">{{book.isbn13}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Author</th>
+            <td colspan="2">{{book.author}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Publisher</th>
+            <td colspan="2">{{book.publisher}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Price</th>
+            <td colspan="2">{{book.price}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Status (1: Available, 0: Pending, -1: Sold) </th>
+            <td colspan="2">{{book.status}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Seller ID</th>
+            <td colspan="2">{{book.seller_id}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Data Addeded</th>
+            <td colspan="2">{{book.date_added}}</td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

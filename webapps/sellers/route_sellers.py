@@ -6,6 +6,7 @@ from db.repository.sellers import create_new_seller
 from db.repository.sellers import list_sellers
 from db.repository.sellers import retreive_seller
 from db.repository.sellers import search_seller
+from db.repository.sellers import update_seller_by_id
 from db.session import get_db
 from fastapi import APIRouter
 from fastapi import Depends
@@ -33,11 +34,18 @@ async def home(request: Request, db: Session = Depends(get_db), msg: str = None)
     )
 """
 
-@router.get("/details/{id}")
+@router.get("/list-all-sellers/")
+def list_all_sellers(request: Request, db: Session = Depends(get_db)):
+    sellers = list_sellers(db=db)
+    return templates.TemplateResponse(
+        "sellers/list_all_sellers.html", {"request": request, "sellers": sellers}
+    )
+
+@router.get("/sellers/{id}")
 def seller_detail(id: int, request: Request, db: Session = Depends(get_db)):
     seller = retreive_seller(id=id, db=db)
     return templates.TemplateResponse(
-        "sellers/detail.html", {"request": request, "seller": seller}
+        "sellers/edit_seller.html", {"request": request, "seller": seller}
     )
 
 
@@ -71,6 +79,38 @@ async def create_seller(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("sellers/create_seller.html", form.__dict__)
 
 
+@router.get("/edit-a-seller/{id}")
+def edit_seller(id: int, request: Request, db: Session = Depends(get_db)):
+    seller = retreive_seller(id=id, db=db)
+    return templates.TemplateResponse(
+        "sellers/edit_seller.html", {"request": request, "seller": seller}
+    )
+
+@router.post("/edit-a-seller/{id}")
+async def update_seller(id: int, request: Request, db: Session = Depends(get_db)):
+    form = SellerCreateForm(request)
+    await form.load_data()
+    if form.is_valid():
+        try:
+            token = request.cookies.get("access_token")
+            scheme, param = get_authorization_scheme_param(
+                token
+            )  # scheme will hold "Bearer" and param will hold actual token value
+            current_user: User = get_current_user_from_token(token=param, db=db)
+            seller = SellerCreate(**form.__dict__)
+            seller = update_seller_by_id(id=id, seller=seller, db=db, owner_id=current_user.id)
+        except Exception as e:
+            print(e)
+            form.__dict__.get("errors").append(
+                "You might not be logged in, In case problem persists please contact us."
+            )
+            return templates.TemplateResponse("general_pages/homepage.html", form.__dict__)
+    seller = retreive_seller(id=id, db=db)
+    return templates.TemplateResponse(
+        "sellers/edit_seller.html", {"request": request, "seller": seller}
+    )
+
+
 @router.get("/delete-seller/")
 def show_sellers_to_delete(request: Request, db: Session = Depends(get_db)):
     sellers = list_sellers(db=db)
@@ -79,7 +119,7 @@ def show_sellers_to_delete(request: Request, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/search/")
+@router.get("/sellers-search/")
 def search(
     request: Request, db: Session = Depends(get_db), query: Optional[str] = None
 ):

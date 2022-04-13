@@ -13,7 +13,7 @@ from starlette.responses import RedirectResponse, JSONResponse
 
 from webapps.auth.forms import LoginForm
 
-from db.repository.sellers import list_sellers
+from db.repository.books import list_books
 from db.session import get_db
 
 
@@ -76,9 +76,9 @@ async def home(request: Request, db: Session = Depends(get_db), msg: str = None,
         #)
         return RedirectResponse(url="/login/")
     else:
-        sellers = list_sellers(db=db)
+        books = list_books(db=db)
         return templates.TemplateResponse(
-            "general_pages/homepage.html", {"request": request, "sellers": sellers, "msg": msg}
+            "general_pages/homepage.html", {"request": request, "books": books, "msg": msg}
         )
 
 @router.get("/logout")

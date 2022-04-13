@@ -2,14 +2,14 @@
 
 
 {% block title %}
-  <title>Delete Sellers</title>
+  <title>List All Sellers</title>
 {% endblock %}
 
 {% block content %}
   <div class="container">
   <div class="row">
     <div class="col">
-      <h1 class="display-5 text-center text-danger mb-3">Delete Sellers</h1>
+      <h1 class="display-5 text-center text-danger mb-3">List All Sellers</h1>
     </div>
     <div id="result" class="text-danger text-bold lead"></div>
   </div>
@@ -32,7 +32,10 @@
                 <td>{{seller.email}}</td>
                 <td>{{seller.paypal}}</td>
                 <td>{{seller.zelle}}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="delete_seller({{seller.id}})">Delete</button></td>
+                <td>
+                  <a href="/edit-a-seller/{{seller.id}}">Edit</a>
+                  <!--<button class="btn btn-danger btn-sm" onclick="delete_seller({{seller.id}})">Delete</button>-->
+                </td>
             </tr>
           {% endfor %}
         </tbody>

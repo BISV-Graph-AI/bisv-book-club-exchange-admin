@@ -1,0 +1,94 @@
+{% extends "shared/base.html" %}
+
+
+{% block title %}
+  <title>Create a Book</title>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="text-danger font-weight-bold">
+        {% for error in errors %}
+          <li>{{error}}</li>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row my-5">
+      <h3 class="text-center display-4">Create a Book</h3>
+      <form method="POST">
+        <div class="mb-3">
+          <label for="html">ISBN-13:</label> <input type="text" required class="form-control" name="isbn13" id="isbn13" value="{{isbn13}}" placeholder="Book ISBN13 here"> <input id="getbookinfo" type="button" value="Get Book Info">
+        </div>
+        <div class="mb-3">
+          <label for="html">Title:</label> <input type="text" required class="form-control" name="title" id="title" value="{{title}}" placeholder="Book Title here">
+        </div>
+        <div class="mb-3">
+          <label for="html">Requirement:</label> <input type="text" placeholder="Book Requirement here" name="requirement" value="{{requirement}}" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="html">Author:</label> <input type="text" placeholder="Book Author here" name="author" id="author" value="{{author}}" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="html">ISBN-10:</label> <input type="text" placeholder="Book ISBN10 here" name="isbn10" id="isbn10" value="{{isbn10}}" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="html">Edition/Copyright:</label> <input type="text" placeholder="Book Edition Copyright here" name="editioncopyright" value="{{editioncopyright}}" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="html">Publisher:</label> <input type="text" placeholder="Book Publisher here" name="publisher" id="publisher" value="{{publisher}}" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="html">Image:</label> <input type="text" placeholder="Book Image here" name="image" id="image" value="{{image}}" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="html">Price:</label> <input type="number" placeholder="Book Price here" name="price" value="{{price}}" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="html">Status:</label> 
+          <select name="status">
+            <option value="1"{% if status==1 %} selected="selected"{% endif %}>Available</option>
+            <option value="0"{% if status==0 %} selected="selected"{% endif %}>Pending</option>
+            <option value="-1"{% if status==-1 %} selected="selected"{% endif %}>Sold</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          Seller: <select name="seller_id">
+            {% for seller in sellers %}
+            <option value="{{seller.id}}">{{seller.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script type="text/javascript">
+
+    $(function () {
+        $("#getbookinfo").click(function (event) {
+            var isbn13s = $('#isbn13').val();
+            $.ajax({
+              type: "GET",
+              url: "/getbookinfo/" + isbn13s,
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              encode: false,
+            }).done(function (data) {
+              $('#title').val(data.title);
+              $('#isbn10').val(data.isbn10);
+              $('#author').val(data.author);
+              $('#publisher').val(data.publisher);
+              $('#image').val(data.image);
+              console.log(data);
+            });
+            event.preventDefault();
+        });
+    });
+</script>
+
+  {% endblock %}

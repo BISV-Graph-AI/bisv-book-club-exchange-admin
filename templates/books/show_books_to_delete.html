@@ -2,14 +2,14 @@
 
 
 {% block title %}
-  <title>Delete Sellers</title>
+  <title>Delete Books</title>
 {% endblock %}
 
 {% block content %}
   <div class="container">
   <div class="row">
     <div class="col">
-      <h1 class="display-5 text-center text-danger mb-3">Delete Sellers</h1>
+      <h1 class="display-5 text-center text-danger mb-3">Delete Books</h1>
     </div>
     <div id="result" class="text-danger text-bold lead"></div>
   </div>
@@ -18,21 +18,23 @@
     <table class="table table-striped">
         <thead>
           <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">PayPal</th>
-            <th scope="col">Zelle</th>
+            <th scope="col">Title</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Author</th>
+            <th scope="col">Price</th>
+            <th scope="col">Seller ID</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          {% for seller in sellers %}
+          {% for book in books %}
             <tr>
-                <td>{{seller.name}}</td>
-                <td>{{seller.email}}</td>
-                <td>{{seller.paypal}}</td>
-                <td>{{seller.zelle}}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="delete_seller({{seller.id}})">Delete</button></td>
+                <td>{{book.title}}</td>
+                <td>{{book.isbn13}}</td>
+                <td>{{book.author}}</td>
+                <td>{{book.price}}</td>
+                <td>{{book.seller_id}}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="delete_book({{book.id}})">Delete</button></td>
             </tr>
           {% endfor %}
         </tbody>
@@ -44,8 +46,8 @@
 
 {% block scripts %}
 <script type="text/javascript">
-    function delete_seller(id){
-        fetch('/delete_seller/'+id,{
+    function delete_book(id){
+        fetch('/books/delete/'+id,{
             method:'DELETE',})
         .then(response => response.json())
         .then(document.getElementById('result').innerHTML = "Refreshing...")
