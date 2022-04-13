@@ -35,12 +35,9 @@ async def login(request: Request, db: Session = Depends(get_db)):
         try:
             form.__dict__.update(msg="Login Successful :)")
             response = templates.TemplateResponse("auth/login.html", form.__dict__)
+            response = templates.TemplateResponse("general_pages/homepage.html", form.__dict__)
             login_for_access_token(response=response, form_data=form, db=db)
             return response
-            #return RedirectResponse(url="/")
-            #return responses.RedirectResponse(
-            #    "/?msg=Successfully-Logined", status_code=status.HTTP_302_FOUND
-            #)  # default is post request, to use get request added status code 302
         except HTTPException:
             form.__dict__.update(msg="")
             form.__dict__.get("errors").append("Incorrect Email or Password")
