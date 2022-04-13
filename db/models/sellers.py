@@ -18,3 +18,4 @@ class Sellers(Base):
     is_active = Column(Boolean(), default=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("Users", back_populates="sellers")
+    books = relationship("Books", back_populates="seller")
