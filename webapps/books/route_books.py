@@ -257,17 +257,20 @@ def import_book(header_dict, row, db, owner_id):
         # Make the book available
         book['status'] = 1
 
-        # Get collection
-        seller = get_seller_id_from_collection(book['collection'], db)
-        if (seller is not None and seller.first()):
-            book['seller_id'] = seller.first().id
-        else:
+        # Get seller ID by collection
+        if (book['collection'].strip() != ''):
+            seller = get_seller_id_from_collection(book['collection'].strip(), db)
+            if (seller is not None and seller.first()):
+                book['seller_id'] = seller.first().id
+
+        # Create a new seller and get seller ID
+        if (book['seller_id'] == 0):
             new_sellercreate = SellerCreate(
-                name=book['collection'],
-                email=book['collection'],
+                name='No Name',
+                email='No Email',
                 paypal='',
                 zelle='',
-                collection=book['collection'],
+                collection='',
                 owner_id=owner_id 
             )
             new_seller = create_new_seller(seller=new_sellercreate, db=db, owner_id=owner_id)
