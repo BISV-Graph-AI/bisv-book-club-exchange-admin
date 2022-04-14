@@ -16,6 +16,11 @@ def retreive_seller(id: int, db: Session):
     return item
 
 
+def get_seller_id_from_collection(collection: str, db: Session):
+    item = db.query(Sellers).filter(Sellers.collection == collection)
+    return item
+
+
 def list_sellers(db: Session):
     sellers = db.query(Sellers).all()
     return sellers

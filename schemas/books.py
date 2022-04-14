@@ -16,6 +16,9 @@ class BookBase(BaseModel):
     image: Optional[str] = None
     price: int
     status: int
+    own: Optional[str] = None
+    collection: Optional[str] = None
+    uuid: Optional[str] = None
     seller_id: int
     date_added: Optional[date] = datetime.now().date()
 
@@ -32,6 +35,9 @@ class BookCreate(BookBase):
     image: Optional[str] = None
     price: int
     status: int
+    own: Optional[str] = None
+    collection: Optional[str] = None
+    uuid: Optional[str] = None
     seller_id: int
     date_added: Optional[date] = datetime.now().date()
 
@@ -48,6 +54,9 @@ class ShowBook(BookBase):
     image: Optional[str] = None
     price: int
     status: int
+    own: Optional[str] = None
+    collection: Optional[str] = None
+    uuid: Optional[str] = None
     seller_id: int
     date_added: Optional[date] = datetime.now().date()
 

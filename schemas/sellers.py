@@ -11,6 +11,7 @@ class SellerBase(BaseModel):
     email: EmailStr
     paypal: Optional[str] = None
     zelle: Optional[str] = None
+    collection: str
     date_added: Optional[date] = datetime.now().date()
 
 
@@ -23,6 +24,8 @@ class SellerCreate(SellerBase):
 class ShowSeller(SellerBase):
     name: str
     email: EmailStr
+    paypal: str
+    collection: str
     date_added: Optional[date] = datetime.now().date()
 
     class Config:  # to convert non dict obj to json

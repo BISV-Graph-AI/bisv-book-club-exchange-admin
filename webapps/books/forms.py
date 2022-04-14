@@ -18,6 +18,9 @@ class BookCreateForm:
         self.image: str
         self.price: int
         self.status: int 
+        self.own: str
+        self.collection: str
+        self.uuid: str
         self.seller_id: int
 
     async def load_data(self):
@@ -32,6 +35,9 @@ class BookCreateForm:
         self.image = form.get("image")
         self.price = form.get("price")
         self.status = form.get("status")
+        self.own = form.get("own")
+        self.collection = form.get("collection")
+        self.uuid = form.get("uuid")
         self.seller_id = form.get("seller_id")
 
     def is_valid(self):

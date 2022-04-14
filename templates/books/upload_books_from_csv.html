@@ -1,0 +1,52 @@
+{% extends "shared/base.html" %}
+
+
+{% block title %}
+  <title>Upload Books From CSV</title>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="text-danger font-weight-bold">
+        {% for error in errors %}
+          <li>{{error}}</li>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="row my-5">
+      <h3 class="text-center display-4">Upload Books From CSV</h3>
+      <form enctype="multipart/form-data" method="POST" id="upload_files_form">
+        <div class="mb-3">
+          <label for="html">We accept CSV file that contains this header: <br /> "#isbn", author, copyright, publisher, own, collection, price, recordUUID, title </label>
+        </div>
+        <div class="mb-3">
+          <label for="html">CSV Files:</label> <input name="files" type="file" multiple>
+        </div>
+        <button type="submit" class="btn btn-primary" id="upload_books_from_csv">Submit</button>
+      </form>
+    </div>
+  </div>
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script type="text/javascript">
+    $(function () {
+        $("#upload_books_from_csv").click(function (event) {
+            let data = new FormData($("#upload_files_form"));
+            $.ajax({
+              type: "POST",
+              data: data,
+              url: "/upload_books_from_csv",
+              contentType: false,
+              encode: false,
+            }).done(function (data) {
+              console.log(data);
+            });
+            event.preventDefault();
+        });
+    });
+</script>
+
+  {% endblock %}

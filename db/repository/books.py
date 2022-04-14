@@ -16,6 +16,9 @@ def create_new_book(book: BookCreate, db: Session):
         image=book.image,
         price=book.price,
         status=book.status,
+        own=book.own,
+        collection=book.collection,
+        uuid=book.uuid,
         seller_id=book.seller_id,
     )
     db.add(book)
@@ -25,6 +28,10 @@ def create_new_book(book: BookCreate, db: Session):
 
 def retreive_book(id: int, db: Session):
     item = db.query(Books).filter(Books.id == id).first()
+    return item
+
+def retreive_book_by_uuid(uuid: str, db: Session):
+    item = db.query(Books).filter(Books.uuid == uuid)
     return item
 
 
