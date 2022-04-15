@@ -1,5 +1,6 @@
 from apis.version1.route_login import login_for_access_token
 from db.session import get_db
+from core.security import get_api_key_default, API_KEY_NAME
 from fastapi import APIRouter, Security, Depends, FastAPI, HTTPException, Request
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
@@ -44,32 +45,9 @@ async def login(request: Request, db: Session = Depends(get_db)):
             return templates.TemplateResponse("auth/login.html", form.__dict__)
     return templates.TemplateResponse("auth/login.html", form.__dict__)
 
-API_KEY_NAME = "access_token"
-api_key_query = APIKeyQuery(name=API_KEY_NAME, auto_error=False)
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
-api_key_cookie = APIKeyCookie(name=API_KEY_NAME, auto_error=False)
-
-async def get_api_key(
-    api_key_query: str = Security(api_key_query),
-    api_key_header: str = Security(api_key_header),
-    api_key_cookie: str = Security(api_key_cookie),
-):
-    api_key = None
-    if (api_key_query is not None):
-        api_key = api_key_query
-    elif (api_key_header is not None):
-        api_key = api_key_header
-    elif (api_key_cookie is not None):
-        api_key = api_key_cookie
-    #else:
-    #    raise HTTPException(
-    #        status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
-    #    )
-    return api_key
-
 
 @router.get("/")
-async def home(request: Request, db: Session = Depends(get_db), msg: str = None, api_key: APIKey = Depends(get_api_key)):
+async def home(request: Request, db: Session = Depends(get_db), msg: str = None, api_key: APIKey = Depends(get_api_key_default)):
     if (api_key is None):
         #raise HTTPException(
         #    status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"

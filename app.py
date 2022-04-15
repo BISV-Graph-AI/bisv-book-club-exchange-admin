@@ -14,5 +14,6 @@ def send_email(to_email, subject, html_content):
         api_key = os.environ.get('SENDGRID_API_KEY')
         sg = SendGridAPIClient(api_key)
         sg.send(message)
+        print('Sent Email To: ' + to_email)
     except Exception as e:
         print('send_email Exception: ' + str(e))

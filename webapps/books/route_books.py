@@ -7,6 +7,7 @@ from typing import List
 from typing import Optional
 
 from apis.version1.route_login import get_current_user_from_token
+from core.security import get_api_key
 from db.models.users import Users
 from db.repository.books import create_new_book
 from db.repository.books import list_books
@@ -24,6 +25,7 @@ from fastapi import UploadFile
 from fastapi import Request
 from fastapi import responses
 from fastapi import status
+from fastapi.security.api_key import APIKey
 from fastapi.security.utils import get_authorization_scheme_param
 from fastapi.templating import Jinja2Templates
 from schemas.books import BookCreate
@@ -90,7 +92,7 @@ async def getbookinfo(isbn13: str):
 
 """
 @router.get("/")
-async def home(request: Request, db: Session = Depends(get_db), msg: str = None):
+async def home(request: Request, db: Session = Depends(get_db), msg: str = None, api_key: APIKey = Depends(get_api_key)):
     books = list_books(db=db)
     return templates.TemplateResponse(
         "general_pages/homepage.html", {"request": request, "books": books, "msg": msg}
@@ -98,14 +100,14 @@ async def home(request: Request, db: Session = Depends(get_db), msg: str = None)
 """
 
 @router.get("/list-all-books/")
-def list_all_books(request: Request, db: Session = Depends(get_db)):
+def list_all_books(request: Request, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     books = list_books(db=db)
     return templates.TemplateResponse(
         "books/list_all_books.html", {"request": request, "books": books}
     )
 
 @router.get("/books/{id}")
-def book_detail(id: int, request: Request, db: Session = Depends(get_db)):
+def book_detail(id: int, request: Request, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     book = retreive_book(id=id, db=db)
     return templates.TemplateResponse(
         "books/detail.html", {"request": request, "book": book}
@@ -113,13 +115,13 @@ def book_detail(id: int, request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/post-a-book/")
-def create_book(request: Request, db: Session = Depends(get_db)):
+def create_book(request: Request, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     sellers = list_sellers(db=db)
     return templates.TemplateResponse("books/create_book.html", {"request": request, "sellers": sellers})
 
 
 @router.post("/post-a-book/")
-async def create_book(request: Request, db: Session = Depends(get_db)):
+async def create_book(request: Request, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     form = BookCreateForm(request)
     await form.load_data()
     if form.is_valid():
@@ -144,7 +146,7 @@ async def create_book(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/edit-a-book/{id}")
-def edit_book(id: int, request: Request, db: Session = Depends(get_db)):
+def edit_book(id: int, request: Request, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     book = retreive_book(id=id, db=db)
     return templates.TemplateResponse(
         "books/edit_book.html", {"request": request, "book": book}
@@ -152,7 +154,7 @@ def edit_book(id: int, request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/edit-a-book/{id}")
-async def update_book(id: int, request: Request, db: Session = Depends(get_db)):
+async def update_book(id: int, request: Request, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     form = BookCreateForm(request)
     await form.load_data()
     if form.is_valid():
@@ -177,7 +179,7 @@ async def update_book(id: int, request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/delete-book/")
-def show_books_to_delete(request: Request, db: Session = Depends(get_db)):
+def show_books_to_delete(request: Request, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     books = list_books(db=db)
     return templates.TemplateResponse(
         "books/show_books_to_delete.html", {"request": request, "books": books}
@@ -346,13 +348,13 @@ def upload_books_from_csv(request, files, db, owner_id):
     return errors
 
 @router.get("/upload-books-from-csv/")
-def get_upload_books_from_csv(request: Request, db: Session = Depends(get_db)):
+def get_upload_books_from_csv(request: Request, db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     return templates.TemplateResponse(
         "books/upload_books_from_csv.html", {"request": request}
     )
 
 @router.post("/upload-books-from-csv/")
-async def post_upload_books_from_csv(request: Request, files: List[UploadFile], db: Session = Depends(get_db)):
+async def post_upload_books_from_csv(request: Request, files: List[UploadFile], db: Session = Depends(get_db), api_key: APIKey = Depends(get_api_key)):
     errors = []
     try:
         token = request.cookies.get("access_token")
