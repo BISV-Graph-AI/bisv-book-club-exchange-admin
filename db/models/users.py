@@ -11,6 +11,7 @@ class Users(Base):
     username = Column(String, unique=True, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)
     hashed_password = Column(String, nullable=False)
+    otp_secret = Column(String, nullable=False)
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
     sellers = relationship("Sellers", back_populates="owner")

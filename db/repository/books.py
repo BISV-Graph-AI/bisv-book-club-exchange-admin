@@ -46,6 +46,7 @@ def update_book_by_id(id: int, book: BookCreate, db: Session):
         return 0
     existing_book.update(book.__dict__)
     db.commit()
+    db.refresh(existing_book)
     return 1
 
 

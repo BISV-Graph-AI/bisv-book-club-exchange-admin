@@ -7,7 +7,8 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
-
+    otp_secret: str 
+    is_active: bool 
 
 class ShowUser(BaseModel):
     username: str
