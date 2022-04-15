@@ -34,7 +34,12 @@
 <script type="text/javascript">
     $(function () {
         $("#upload_books_from_csv").click(function (event) {
-            let data = new FormData($("#upload_files_form"));
+            var data = new FormData();
+            $.each($("input[type='file']")[0].files, function(i, file) {
+                data.append(i, file);
+            });
+
+            //let data = new FormData($("#upload_files_form"));
             $.ajax({
               type: "POST",
               data: data,

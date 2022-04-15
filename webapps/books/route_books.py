@@ -241,60 +241,63 @@ def import_book(header_dict, row, db, owner_id):
         row_isbn = book['isbn13']
         row_uuid = book['uuid']
 
-        # Check UUID
+        # Check book with UUID, skip it the book exists, ignore the book with empty isbn
         existing_book = retreive_book_by_uuid(book['uuid'], db)
-        if (existing_book.first()):
-            return created, row_isbn, row_uuid
+        isbn13_str = str(book['isbn13'])
+        if (existing_book is not None and not existing_book.first() and isbn13_str.strip() != ''):
+            # Round price
+            try:
+                str_price = str(book['price'])
+                if (len(str_price.strip()) > 0):
+                    price = float(str_price)
+                    book['price'] = math.ceil(price)
+            except Exception:
+                book['price'] = 0
 
-        # Ignore the book with empty isbn 
-        if (book['isbn13'].strip() == ""):
-            return created, row_isbn, row_uuid 
+            # Make the book available
+            book['status'] = 1
 
-        # Round price
-        price = float(str(book['price']))
-        book['price'] = math.ceil(price)
+            # Get seller ID by collection
+            try:
+                if (book['collection'].strip() != ''):
+                    seller = get_seller_id_from_collection(book['collection'].strip(), db)
+                    if (seller is not None and seller.first()):
+                        book['seller_id'] = seller.first().id
+            except Exception:
+                book['seller_id'] = 0
 
-        # Make the book available
-        book['status'] = 1
+            # Create a new seller and get seller ID
+            if (book['seller_id'] == 0):
+                new_sellercreate = SellerCreate(
+                    name='No Name',
+                    email='No Email',
+                    paypal='',
+                    zelle='',
+                    collection='',
+                    owner_id=owner_id 
+                )
+                new_seller = create_new_seller(seller=new_sellercreate, db=db, owner_id=owner_id)
+                book['seller_id'] = new_seller.id 
 
-        # Get seller ID by collection
-        if (book['collection'].strip() != ''):
-            seller = get_seller_id_from_collection(book['collection'].strip(), db)
-            if (seller is not None and seller.first()):
-                book['seller_id'] = seller.first().id
-
-        # Create a new seller and get seller ID
-        if (book['seller_id'] == 0):
-            new_sellercreate = SellerCreate(
-                name='No Name',
-                email='No Email',
-                paypal='',
-                zelle='',
-                collection='',
-                owner_id=owner_id 
+            # Create a book
+            new_bookcreate = BookCreate(
+                title=book['title'],
+                requirement=book['requirement'],
+                author=book['author'],
+                isbn13=book['isbn13'],
+                isbn10=book['isbn10'],
+                editioncopyright=book['editioncopyright'],
+                publisher=book['publisher'],
+                image=book['image'],
+                price=book['price'],
+                status=book['status'],
+                own=book['own'],
+                collection=book['collection'],
+                uuid=book['uuid'],
+                seller_id=book['seller_id']
             )
-            new_seller = create_new_seller(seller=new_sellercreate, db=db, owner_id=owner_id)
-            book['seller_id'] = new_seller.id 
-
-        # Create a book
-        new_bookcreate = BookCreate(
-            title=book['title'],
-            requirement=book['requirement'],
-            author=book['author'],
-            isbn13=book['isbn13'],
-            isbn10=book['isbn10'],
-            editioncopyright=book['editioncopyright'],
-            publisher=book['publisher'],
-            image=book['image'],
-            price=book['price'],
-            status=book['status'],
-            own=book['own'],
-            collection=book['collection'],
-            uuid=book['uuid'],
-            seller_id=book['seller_id']
-        )
-        new_book = create_new_book(book=new_bookcreate, db=db)
-        created = True
+            new_book = create_new_book(book=new_bookcreate, db=db)
+            created = True
     except Exception as err:
         created = False
         print('import_book Exception: ' + str(err))
@@ -330,7 +333,7 @@ def upload_books_from_csv(request, files, db, owner_id):
                     if (line_count > 0):
                         created, row_isbn, row_uuid = import_book(header_dict, row, db, owner_id)
                         if (not created):
-                            errors.append('ISBN: {} UUID: {} was NOT Created. '.format)
+                            errors.append('ISBN: {} UUID: {} existed. Skipped.'.format(row_isbn, row_uuid))
                     line_count += 1
 
             # Send to Gmail for storage
